@@ -2,11 +2,21 @@ from app.api import bp
 from flask import Response, request
 from flask_cors import cross_origin
 # import json
+import finnhub
+import os
+
+configuration = finnhub.Configuration(
+    api_key={
+        'token': os.environ['STONK_API_KEY']
+    }
+)
+finnhub_client = finnhub.DefaultApi(finnhub.ApiClient(configuration))
 
 
-@bp.route('/', methods=['GET'])
+@bp.route('/stocks/symbols', methods=['GET'])
 @cross_origin()
 def search():
+    print(finnhub_client.stock_symbols('US'))
     return Response("", status=200, mimetype='text/plain')
 
 #
