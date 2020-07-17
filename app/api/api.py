@@ -29,7 +29,7 @@ def get_stock_symbols():
         return Response("Unknown server error", status=500, mimetype="text/plain")
 
 
-@bp.route("/stocks/company_profile", methods=["GET"])
+@bp.route("/stocks/company/profile", methods=["GET"])
 @cross_origin()
 def get_company_profile():
     try:
@@ -37,11 +37,34 @@ def get_company_profile():
         if stock_symbol is None:
             return Response("stockSymbol not defined", status=500, mimetype="text/plain")
         company_profile_response = finnhub_client.company_profile2(symbol=stock_symbol)
-        print(company_profile_response)
         return jsonify(company_profile_response.to_dict())
     except Exception as e:
         print(e)
         return Response("Unknown server error", status=500, mimetype="text/plain")
+
+
+@bp.route("/stocks/company/news", methods=["GET"])
+@cross_origin()
+def get_company_news():
+    try:
+        stock_symbol = request.args.get("stockSymbol")
+        from_date = request.args.get("fromDate")  # "2020-06-01"
+        to_date = request.args.get("toDate")  # "2020-06-10"
+        if stock_symbol is None or from_date is None or to_date is None:
+            return Response("stockSymbol not defined", status=500, mimetype="text/plain")
+        company_news_response = finnhub_client.company_news(stock_symbol, _from=from_date, to=to_date)
+        company_news_array = []
+        for news in company_news_response:
+            company_news = {"category": news.category, "datetime": news.datetime,
+                            "headline": news.headline, "id": news.id, "image": news.image,
+                            "related": news.related, "source": news.source, "summary": news.summary,
+                            "url": news.url}
+            company_news_array.append(company_news)
+        return jsonify(company_news_array)
+    except Exception as e:
+        print(e)
+        return Response("Unknown server error", status=500, mimetype="text/plain")
+
 
 # Need Premium subscription :(
 @bp.route("/stocks/tick/data", methods=["GET"])
@@ -65,8 +88,8 @@ def get_tick_data():
 def get_general_news():
     try:
         general_news_response = finnhub_client.general_news('general', min_id=0)
-        newsArray = []
         print(general_news_response)
+        newsArray = []
         for general_news in general_news_response:
             news = {"category": general_news.category, "datetime": general_news.datetime,
                     "headline": general_news.headline, "id": general_news.id, "image": general_news.image,
