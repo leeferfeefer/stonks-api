@@ -66,6 +66,20 @@ def get_company_news():
         return Response("Unknown server error", status=500, mimetype="text/plain")
 
 
+@bp.route("/stocks/company/financials", methods=["GET"])
+@cross_origin()
+def get_company_financials():
+    try:
+        stock_symbol = request.args.get("stockSymbol")
+        if stock_symbol is None:
+            return Response("stockSymbol not defined", status=500, mimetype="text/plain")
+        company_financials_response = finnhub_client.company_basic_financials(stock_symbol, 'all')
+        return jsonify(company_financials_response.to_dict())
+    except Exception as e:
+        print(e)
+        return Response("Unknown server error", status=500, mimetype="text/plain")
+
+
 # Need Premium subscription :(
 @bp.route("/stocks/tick/data", methods=["GET"])
 @cross_origin()
