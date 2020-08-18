@@ -3,12 +3,7 @@ from flask import Response, request, jsonify
 
 
 def get_stock_symbols():
-    try:
-        return finnhub_client.stock_symbols("US")
-    except Exception as e:
-        print(e)
-        # return Response("Unknown server error", status=500, mimetype="text/plain")
-        return None
+    return finnhub_client.stock_symbols("US")
 
 
 def get_company_profile():

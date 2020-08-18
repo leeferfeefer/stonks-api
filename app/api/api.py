@@ -3,12 +3,20 @@ from flask_cors import cross_origin
 from app.finnhub import finnhubService
 from app.db import db
 from flask import Response, jsonify
-
+from app.model import stockSymbol
 
 @bp.route("/stocks/symbols", methods=["GET"])
 @cross_origin()
 def get_stock_symbols():
-    return jsonify(db.get_stock_symbols())
+    try:
+        stock_symbol_entities = db.get_stock_symbols()
+        stock_symbols = []
+        for stock_symbol_entity in stock_symbol_entities:
+            stock_symbols.append(stockSymbol.entity_to_dict(stock_symbol_entity))
+        return jsonify(stock_symbols)
+    except Exception as e:
+        print(e)
+        return Response("Unknown server error", status=500, mimetype="text/plain")
 
 
 @bp.route("/stocks/company/profile", methods=["GET"])

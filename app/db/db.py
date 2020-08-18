@@ -1,12 +1,12 @@
 import sqlite3
 from sqlite3 import Error
+from app.model import stockSymbol
 
 
 def create_connection(db_file):
     connection = None
     try:
         connection = sqlite3.connect(db_file)
-        print(sqlite3.version)
         return connection
     except Error as e:
         print(e)
@@ -42,12 +42,14 @@ else:
 
 
 def save_stock_symbol(stock_symbol):
+    stonk_record = stockSymbol.dict_to_entity(stock_symbol)
+
     connection = create_connection(r"stonks.db")
 
     sql = ''' INSERT INTO stonks(currency,description,displaySymbol,symbol,type)
               VALUES(?,?,?,?,?) '''
     cur = connection.cursor()
-    cur.execute(sql, stock_symbol)
+    cur.execute(sql, stonk_record)
     connection.commit()
     return cur.lastrowid
 
