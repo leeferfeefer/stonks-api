@@ -1,29 +1,18 @@
 from app.api import bp
 from flask import Response, request, jsonify
 from flask_cors import cross_origin
-import json
 import finnhub
 import os
 
-configuration = finnhub.Configuration(
-    api_key={
-        "token": os.environ["STONK_API_KEY"]
-    }
-)
-finnhub_client = finnhub.DefaultApi(finnhub.ApiClient(configuration))
+finnhub_client = finnhub.Client(api_key=os.environ["STONK_API_KEY"])
 
 
 @bp.route("/stocks/symbols", methods=["GET"])
 @cross_origin()
 def get_stock_symbols():
     try:
-        stock_symbols_response = finnhub_client.stock_symbols("US")
-        stock_symbols = []
-        for stock in stock_symbols_response:
-            stock_symbol = {"description": stock.description, "display_symbol": stock.display_symbol,
-                            "symbol": stock.symbol}
-            stock_symbols.append(stock_symbol)
-        return jsonify(stock_symbols)
+        stock_symbols_response = finnhub_client.stock_symbols("US")[0:25]
+        return jsonify(stock_symbols_response)
     except Exception as e:
         print(e)
         return Response("Unknown server error", status=500, mimetype="text/plain")
@@ -37,7 +26,7 @@ def get_company_profile():
         if stock_symbol is None:
             return Response("stockSymbol not defined", status=500, mimetype="text/plain")
         company_profile_response = finnhub_client.company_profile2(symbol=stock_symbol)
-        return jsonify(company_profile_response.to_dict())
+        return jsonify(company_profile_response)
     except Exception as e:
         print(e)
         return Response("Unknown server error", status=500, mimetype="text/plain")
@@ -53,14 +42,7 @@ def get_company_news():
         if stock_symbol is None or from_date is None or to_date is None:
             return Response("stockSymbol not defined", status=500, mimetype="text/plain")
         company_news_response = finnhub_client.company_news(stock_symbol, _from=from_date, to=to_date)
-        company_news_array = []
-        for news in company_news_response:
-            company_news = {"category": news.category, "datetime": news.datetime,
-                            "headline": news.headline, "id": news.id, "image": news.image,
-                            "related": news.related, "source": news.source, "summary": news.summary,
-                            "url": news.url}
-            company_news_array.append(company_news)
-        return jsonify(company_news_array)
+        return jsonify(company_news_response)
     except Exception as e:
         print(e)
         return Response("Unknown server error", status=500, mimetype="text/plain")
