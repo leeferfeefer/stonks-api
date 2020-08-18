@@ -54,7 +54,17 @@ def save_stock_symbol(stock_symbol):
     return cur.lastrowid
 
 
-def get_stock_symbols():
+def get_stock_symbols_by_page(page_number, quantity):
+    connection = create_connection(r"stonks.db")
+
+    cur = connection.cursor()
+    sql = 'SELECT * FROM stonks LIMIT {quantity} OFFSET {offset}.'.format(quantity=quantity, offset=page_number*quantity)
+    cur.execute(sql)
+    rows = cur.fetchall()
+    return rows
+
+
+def get_all_stock_symbols():
     connection = create_connection(r"stonks.db")
 
     cur = connection.cursor()
