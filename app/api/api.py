@@ -10,11 +10,14 @@ from app.model import stockSymbol
 @cross_origin()
 def get_stock_symbols():
     try:
-        page_number = int(request.args.get("pageNumber"))
-        quantity = int(request.args.get("quantity"))
-        if page_number is None or quantity is None:
-            return Response("stockSymbol not defined", status=500, mimetype="text/plain")
-        stock_symbol_entities = db.get_stock_symbols_by_page(page_number, quantity)
+        page_number = request.args.get("pageNumber")
+        quantity = request.args.get("quantity")
+        query = request.args.get("query")
+        if page_number is None or query is None:
+            return Response("required value not defined", status=500, mimetype="text/plain")
+        if quantity is None:
+            return Response("quantity must be defined", status=500, mimetype="text/plain")
+        stock_symbol_entities = db.get_stock_symbols_by_query(query, quantity, page_number)
         stock_symbols = []
         for stock_symbol_entity in stock_symbol_entities:
             stock_symbols.append(stockSymbol.entity_to_dict(stock_symbol_entity))
