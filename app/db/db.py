@@ -67,9 +67,10 @@ def save_stock_symbol(stock_symbol):
 def get_stock_symbols_by_query(query, quantity, page_number):
     connection = create_connection(r"stonks.db")
 
+    offset = int(quantity) * int(page_number)
     cur = connection.cursor()
     sql = "select * from stonks where symbol or description like '%"+query+"%' LIMIT " \
-          + quantity + " OFFSET " + page_number + ";"
+          + quantity + " OFFSET " + str(offset) + ";"
     cur.execute(sql)
     rows = cur.fetchall()
     return rows
