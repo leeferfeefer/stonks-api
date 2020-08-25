@@ -6,3 +6,6 @@ For updating all packages: [look here](https://dougie.io/answers/pip-update-all-
 to run: `flask run`
 
 to run available to any machine on network: `flask run -host=0.0.0.0`
+
+
+to install dependencies: `pip install -r requirements.txt`
