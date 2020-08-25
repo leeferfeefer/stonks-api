@@ -7,5 +7,8 @@ to run: `flask run`
 
 to run available to any machine on network: `flask run -host=0.0.0.0`
 
+to add to requirements file:    
+`pip freeze > requirements.txt`
 
-to install dependencies: `pip install -r requirements.txt`
+to install dependencies:    
+`pip install -r requirements.txt`
