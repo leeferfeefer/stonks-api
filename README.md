@@ -19,7 +19,7 @@ Install sqlite3:
 `brew install sqlite3`
 
 To run the DB:   
-`sqlite3 ./stonks.db`
+`sqlite3 ./stonks.db` 
 
 
 ##Virtual Environments:   
