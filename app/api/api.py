@@ -34,7 +34,7 @@ def get_company_profile():
         stock_symbol = request.args.get("stockSymbol")
         if stock_symbol is None:
             return Response("stockSymbol not defined", status=500, mimetype="text/plain")
-        return jsonify(finnhubService.get_company_profile(stockSymbol))
+        return jsonify(finnhubService.get_company_profile(stock_symbol))
     except Exception as e:
         print(e)
         return Response("Unknown server error", status=500, mimetype="text/plain")
